@@ -1,4 +1,13 @@
-import os, winshell, shutil
+import cowsay
+import os
+import random
+import shutil
+import winshell
+from logo import bin_logo
+
+
+def func_info_message():
+    print(bin_logo)
 
 
 def func_clear_recycle_bin():
@@ -27,17 +36,26 @@ def func_clear_temp(temp_path):
     except:
         print("Возникла ошибка при очистки папки temp...")
 
+
 user_name = "pwp"
 test_path = f"C:\\Users\\{user_name}\\Documents\\my file\\test"
 temp_path = f"C:\\Users\\{user_name}\\AppData\\Local\\Temp"
 
-value_choice = int(input(
-    "1 - чистка корзины, 2 - чистка папки темп, 3 - удаление папки: "))
+value_choice = input(
+    "1 - чистка корзины, 2 - чистка папки темп, 3 - удаление папки: ")
 
 if __name__ == "__main__":
-    if value_choice == 1:
+    if value_choice == "1":
         func_clear_recycle_bin()
-    elif value_choice == 2:
+
+    elif value_choice == "2":
         func_clear_temp(temp_path)
-    else:
+
+    elif value_choice == "3":
         func_delete_folder(test_path)
+
+    elif value_choice == "info":
+        func_info_message()
+
+    else:
+        func_info_message()
