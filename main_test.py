@@ -1,61 +1,69 @@
-import cowsay
-import os
-import random
-import shutil
-import winshell
 from logo import bin_logo
+import cowsay, os, random, shutil, win10toast, winshell
 
 
-def func_info_message():
-    print(bin_logo)
-
-
+# Block of functions
 def func_clear_recycle_bin():
-    try:
-        winshell.recycle_bin().empty(confirm=False, show_progress=True, sound=True)
-        print("Корзина очищена")
-    except:
-        print("Возникла ошибка при чистке корзины, попробуйте снова\nВозможно корзина уже пуста, проверьте перед очисткой...")
-
-
-def func_delete_folder(path):
-    # folder_name = input("Введите имя папки для удаления: ")
-    # folder_path = input("Введите путь для удаления папки: ")
-    try:
-        shutil.rmtree(f'{path}')
-        # shutil.rmtree(f'{folder_path}\\{folder_name}')
-        print("Папка удалена")
-    except:
-        print("При удалении папки возникла ошибка, попробуйте ещё раз...")
+    winshell.recycle_bin().empty(confirm=False, show_progress=True, sound=True)
 
 
 def func_clear_temp(temp_path):
-    try:
-        shutil.rmtree(temp_path, ignore_errors=True)
-        print("Папка temp очищена")
-    except:
-        print("Возникла ошибка при очистки папки temp...")
+    shutil.rmtree(temp_path, ignore_errors=True)
 
 
+def func_info_message(bin_logo):
+    print(bin_logo)
+
+
+def func_notification_message(toast, why, mode):
+    if mode == "error":
+        toast.show_toast(title="PyRemoveTools", msg=f"Возникла ошибка при очистке {why}", duration=4)
+    elif mode == "complete":
+        toast.show_toast(title="PyRemoveTools", msg=f"{why} успешно очищена", duration=4)
+
+
+
+# Important variables
 user_name = "pwp"
-test_path = f"C:\\Users\\{user_name}\\Documents\\my file\\test"
 temp_path = f"C:\\Users\\{user_name}\\AppData\\Local\\Temp"
 
 value_choice = input(
-    "1 - чистка корзины, 2 - чистка папки темп, 3 - удаление папки: ")
+    '''
+1 - Очистка корзины
+2 - Очистка папки temp
+3 - Очистка всего сразу
 
+''')
+
+toast = win10toast.ToastNotifier()
+
+
+
+# The starting point of the program
 if __name__ == "__main__":
     if value_choice == "1":
-        func_clear_recycle_bin()
+        try:
+            func_clear_recycle_bin()
+            func_notification_message(toast, "Корзина", "complete")
+        except:
+            func_notification_message(toast,
+                                "корзины, попробуйте снова\nВозможно корзина уже пуста, проверьте перед очисткой...",
+                                "error")
 
     elif value_choice == "2":
-        func_clear_temp(temp_path)
+        try:
+            func_clear_temp(temp_path)
+            func_notification_message(toast, "Папка temp", "complete")
+        except:
+            func_notification_message(toast, "temp", "error")
 
     elif value_choice == "3":
-        func_delete_folder(test_path)
+        try:
+            func_clear_temp(temp_path)
+            func_clear_recycle_bin()
+            func_notification_message(toast, "Корзина и папка temp", "complete")
+        except:
+            func_notification_message(toast, "корзины и папки temp", "error")
 
     elif value_choice == "info":
-        func_info_message()
-
-    else:
-        func_info_message()
+        func_info_message(bin_logo)
